@@ -1,3 +1,4 @@
+from ultralytics import YOLO
 import os
 from django.apps import AppConfig
 import tensorflow as tf
@@ -5,6 +6,7 @@ from keras.layers import Input , Dense , Flatten , GlobalAveragePooling2D
 from keras import Sequential, Model
 from keras.activations import softmax
 import joblib
+
 # 10 species (Apple,Coffee,Grape,Lemon,Mango,Potato,Rice,Sugarcane,Tea,Wheat) and 40 categories
 Plant_Disesase_Categories={
  'Apple__black_rot': 0,
@@ -48,6 +50,8 @@ Plant_Disesase_Categories={
  'Wheat__stripe_rust': 38,
  'Wheat__yellow_rust': 39
  }
+
+
 Crop_Damage_Categories= {
     'Drought': 0, # Drought damage
     'Good Health': 1, # Good health
@@ -55,6 +59,7 @@ Crop_Damage_Categories= {
     'Weed Damage': 3, # Weed Daamge
     'Other Damage(pests,wind,...)': 4 # Damage from other sources like wind o pests
 }
+
 XceptionArch = tf.keras.applications.xception.Xception(input_shape=(128,128,3),
                                            include_top=False,
                                            weights='imagenet')
@@ -75,8 +80,10 @@ Crop_Damage_Classification_Model.add(Flatten())
 Crop_Damage_Classification_Model.add(Dense(1024,activation='relu'))
 Crop_Damage_Classification_Model.add(Dense(512,activation='relu'))
 Crop_Damage_Classification_Model.add(Dense(5, activation="softmax" , name="classification"))
-crop_recommendation=None
 
+Crop_Recommendation_Model=None
+
+Weed_Detection_Model=None
 class MlappConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'core.MLApp'
@@ -84,12 +91,18 @@ class MlappConfig(AppConfig):
     
     def ready(self):
         global Disease_Detection_model
-        global crop_recommendation
-
+        global Crop_Recommendation
+        global Crop_Damage_Classification_Model
+        global Weed_Detection_Model
+        
         # Get the absolute path to the weights file
         disease_detection_weights_path = os.path.join(os.path.dirname(__file__), 'weights/PlantDiseaseModel.hdf5')
-        crop_recommendation_model_path= os.path.join(os.path.dirname(__file__), 'weights/crop_recommendation.joblib')
+        crop_recommendation_model_path= os.path.join(os.path.dirname(__file__), 'weights/CropRecommendationModel.joblib')
         crop_damage_model_path=os.path.join(os.path.dirname(__file__), 'weights/CropDamageClassificationModel.hdf5')
-        crop_recommendation=joblib.load(crop_recommendation_model_path)
+        weed_detection_model_path=os.path.join(os.path.dirname(__file__),'weights/WeedDetectionModel.pt')
+        
+        # Load weights to the models
+        Weed_Detection_Model=YOLO(weed_detection_model_path)
+        Crop_Recommendation=joblib.load(crop_recommendation_model_path)
         Disease_Detection_model.load_weights(disease_detection_weights_path )
         Crop_Damage_Classification_Model.load_weights(crop_damage_model_path)
