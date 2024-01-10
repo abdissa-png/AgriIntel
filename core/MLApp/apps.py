@@ -48,6 +48,13 @@ Plant_Disesase_Categories={
  'Wheat__stripe_rust': 38,
  'Wheat__yellow_rust': 39
  }
+Crop_Damage_Categories= {
+    'Drought': 0, # Drought damage
+    'Good Health': 1, # Good health
+    'Nutrient Deficiency': 2, # Nutrient Deficiency
+    'Weed Damage': 3, # Weed Daamge
+    'Other Damage(pests,wind,...)': 4 # Damage from other sources like wind o pests
+}
 XceptionArch = tf.keras.applications.xception.Xception(input_shape=(128,128,3),
                                            include_top=False,
                                            weights='imagenet')
@@ -59,6 +66,15 @@ Disease_Detection_model.add(Dense(1024, activation="relu"))
 Disease_Detection_model.add(Dense(512, activation="relu"))
 Disease_Detection_model.add(Dense(40, activation="softmax" , name="classification"))
 
+MobileNetModel = tf.keras.applications.MobileNet(weights='imagenet', include_top=False, input_shape=(256, 256, 3)) # 224 224 3
+# base_model.trainable = False
+Crop_Damage_Classification_Model = Sequential()
+Crop_Damage_Classification_Model.add(MobileNetModel)
+Crop_Damage_Classification_Model.add(GlobalAveragePooling2D())
+Crop_Damage_Classification_Model.add(Flatten())
+Crop_Damage_Classification_Model.add(Dense(1024,activation='relu'))
+Crop_Damage_Classification_Model.add(Dense(512,activation='relu'))
+Crop_Damage_Classification_Model.add(Dense(5, activation="softmax" , name="classification"))
 crop_recommendation=None
 
 class MlappConfig(AppConfig):
@@ -73,5 +89,7 @@ class MlappConfig(AppConfig):
         # Get the absolute path to the weights file
         disease_detection_weights_path = os.path.join(os.path.dirname(__file__), 'weights/PlantDiseaseModel.hdf5')
         crop_recommendation_model_path= os.path.join(os.path.dirname(__file__), 'weights/crop_recommendation.joblib')
+        crop_damage_model_path=os.path.join(os.path.dirname(__file__), 'weights/CropDamageClassificationModel.hdf5')
         crop_recommendation=joblib.load(crop_recommendation_model_path)
         Disease_Detection_model.load_weights(disease_detection_weights_path )
+        Crop_Damage_Classification_Model.load_weights(crop_damage_model_path)
