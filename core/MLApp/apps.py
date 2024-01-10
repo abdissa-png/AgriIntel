@@ -91,7 +91,7 @@ class MlappConfig(AppConfig):
     
     def ready(self):
         global Disease_Detection_model
-        global Crop_Recommendation
+        global Crop_Recommendation_Model
         global Crop_Damage_Classification_Model
         global Weed_Detection_Model
         
@@ -103,6 +103,6 @@ class MlappConfig(AppConfig):
         
         # Load weights to the models
         Weed_Detection_Model=YOLO(weed_detection_model_path)
-        Crop_Recommendation=joblib.load(crop_recommendation_model_path)
+        Crop_Recommendation_Model=joblib.load(crop_recommendation_model_path)
         Disease_Detection_model.load_weights(disease_detection_weights_path )
         Crop_Damage_Classification_Model.load_weights(crop_damage_model_path)

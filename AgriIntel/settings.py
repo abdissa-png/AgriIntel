@@ -76,7 +76,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'AgriIntel.wsgi.application'
-
+ALLOWED_HOSTS=[
+    '192.168.1.6'
+]
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
