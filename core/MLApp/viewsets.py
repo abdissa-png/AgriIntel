@@ -5,6 +5,7 @@ from django.core.files.base import ContentFile
 import io
 import os
 from PIL import Image
+import cv2
 import numpy as np
 import tensorflow as tf
 from rest_framework.permissions import IsAuthenticated
@@ -45,7 +46,7 @@ class PredictViewSet(GenericViewSet):
       test = np.array([body['N'], body['P'], body['K'], body['temp'], body['humidity'], body['ph'], body['rainfall']])
       prediction = crop_recommendation.predict(test.reshape(1,-1))[0]
       return Response({'message':'Request received and processed.','prediction':f'The app recommends you to plant {prediction}'})
-  @action(detail=False,methods=['post'],url_path='Damage')
+  @action(detail=False,methods=['post'],url_path='CropDamage')
   def CropDamagePredict(self,request):
       serializer = ImageSerializer(data=request.data)
       if not serializer.is_valid():
@@ -57,11 +58,12 @@ class PredictViewSet(GenericViewSet):
       # Convert the image to a NumPy array
       image_pil = Image.open(image)
 
-      # Resize the image
-      image_pil = image_pil.resize((256, 256))
-      image_pil=tf.keras.applications.mobilenet.preprocess_input(image_pil)
       # Convert the PIL image to a NumPy array
       image = np.array(image_pil)
+      image=tf.keras.applications.mobilenet.preprocess_input(image)
+      # Resize the image
+      image = cv2.resize(image,(256,256))
+      print(image.shape)
       image = np.expand_dims(image, axis=0)
       # Now you can use the processed image for prediction
       predictions = Crop_Damage_Classification_Model.predict(image)
