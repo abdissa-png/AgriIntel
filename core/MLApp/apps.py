@@ -51,13 +51,10 @@ Plant_Disesase_Categories={
  'Wheat__yellow_rust': 39
  }
 
-
 Crop_Damage_Categories= {
     'Drought': 0, # Drought damage
     'Good Health': 1, # Good health
-    'Nutrient Deficiency': 2, # Nutrient Deficiency
-    'Weed Damage': 3, # Weed Daamge
-    'Other Damage(pests,wind,...)': 4 # Damage from other sources like wind o pests
+    'Weed Damage': 2, # Weed Daamge
 }
 
 XceptionArch = tf.keras.applications.xception.Xception(input_shape=(128,128,3),

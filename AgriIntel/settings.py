@@ -26,8 +26,9 @@ SECRET_KEY = 'django-insecure-t90ra*3#1_of890bm778o8ilei1k5-3_&w2@_$j!jus%govxbf
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = ["colab.research.google.com","https://nrkdfs8q-8000.uks1.devtunnels.ms:8000"]
 
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Application definition
 
@@ -50,6 +51,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -76,9 +78,9 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'AgriIntel.wsgi.application'
-ALLOWED_HOSTS=[
-    '192.168.1.6'
-]
+# ALLOWED_HOSTS=[
+#     '192.168.1.6'
+# ]
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
