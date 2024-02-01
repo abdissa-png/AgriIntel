@@ -76,7 +76,7 @@ Crop_Damage_Classification_Model.add(GlobalAveragePooling2D())
 Crop_Damage_Classification_Model.add(Flatten())
 Crop_Damage_Classification_Model.add(Dense(1024,activation='relu'))
 Crop_Damage_Classification_Model.add(Dense(512,activation='relu'))
-Crop_Damage_Classification_Model.add(Dense(5, activation="softmax" , name="classification"))
+Crop_Damage_Classification_Model.add(Dense(3, activation="softmax" , name="classification"))
 
 Crop_Recommendation_Model=None
 
