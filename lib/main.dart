@@ -29,7 +29,10 @@ class MyApp extends StatelessWidget {
         path: '/recommendation',
         builder: ((context, state) => Recommendation())),
     GoRoute(path: '/recommended', builder: ((context, state) => Recommended())),
-    GoRoute(path: '/', builder: ((context, state) => RegistrationPage())),
+    GoRoute(path: '/', builder: ((context, state) => LoginPage())),
+    GoRoute(
+        path: '/registration',
+        builder: ((context, state) => RegistrationPage())),
     GoRoute(path: '/login', builder: ((context, state) => LoginPage())),
     GoRoute(path: '/home', builder: ((context, state) => LandingPage())),
   ]);
@@ -38,10 +41,25 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp.router(
+        debugShowCheckedModeBanner: false,
         title: 'Automated Crop Guidance',
         routerConfig: _router,
         theme: ThemeData(
-          colorScheme: ColorScheme.light().copyWith(primary: Colors.red),
+          colorScheme: ColorScheme.light().copyWith(primary: Colors.black12),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              primary: Colors.black87,
+              onPrimary: Colors.white,
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(9.0),
+              ),
+              textStyle: TextStyle(
+                fontSize: 16,
+              ),
+              elevation: 10,
+            ),
+          ),
         ));
   }
 }

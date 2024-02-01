@@ -4,7 +4,6 @@ import 'package:crop_recommendation/dataprovider/mlprovider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:go_router/go_router.dart';
 
@@ -15,8 +14,10 @@ class DiseaseDetection extends StatefulWidget {
 
 class _DiseaseDetectionState extends State<DiseaseDetection> {
   File? _image;
+  bool _isLoading = false;
 
   Future<void> _getImage(ImageSource source) async {
+    
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: source);
 
@@ -26,6 +27,9 @@ class _DiseaseDetectionState extends State<DiseaseDetection> {
   }
 
   Future<void> _uploadImage() async {
+      setState(() {
+      _isLoading = true;
+    });
     if (_image == null) {
       return;
     }
@@ -64,13 +68,18 @@ class _DiseaseDetectionState extends State<DiseaseDetection> {
     } catch (error) {
       print("Error sending data: $error");
     }
+    finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Image Upload App"),
+        title: Text("Disease Detection"),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -82,8 +91,13 @@ class _DiseaseDetectionState extends State<DiseaseDetection> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            if (_isLoading)
+                Center(child: CircularProgressIndicator())
+              else ...[
             _image == null
-                ? Text("No image selected")
+                ? Row( mainAxisAlignment: MainAxisAlignment.center,
+                children: [Text("No image selected"),Icon(Icons.photo_library)])
+
                 : Image.file(
                     _image!,
                     height: 150,
@@ -109,7 +123,7 @@ class _DiseaseDetectionState extends State<DiseaseDetection> {
               child: Text("Submit"),
             ),
           ],
-        ),
+        ]),
       ),
     );
   }

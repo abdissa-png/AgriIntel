@@ -15,6 +15,7 @@ class WeedDetection extends StatefulWidget {
 
 class _WeedDetectionState extends State<WeedDetection> {
   File? _image;
+  bool _isLoading = false;
 
   Future<void> _getImage(ImageSource source) async {
     final picker = ImagePicker();
@@ -26,6 +27,9 @@ class _WeedDetectionState extends State<WeedDetection> {
   }
 
   Future<void> _uploadImage() async {
+      setState(() {
+      _isLoading = true;
+    });
     if (_image == null) {
       return;
     }
@@ -59,13 +63,18 @@ class _WeedDetectionState extends State<WeedDetection> {
     } catch (error) {
       print("Error sending data: $error");
     }
+    finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Image Upload App"),
+        title: Text("Weed detection"),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -77,8 +86,12 @@ class _WeedDetectionState extends State<WeedDetection> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            if (_isLoading)
+                Center(child: CircularProgressIndicator())
+              else ...[
             _image == null
-                ? Text("No image selected")
+                ? Row( mainAxisAlignment: MainAxisAlignment.center,
+                children: [Text("No image selected"),Icon(Icons.photo_library)])
                 : Image.file(
                     _image!,
                     height: 150,
@@ -104,7 +117,7 @@ class _WeedDetectionState extends State<WeedDetection> {
               child: Text("Submit"),
             ),
           ],
-        ),
+        ]),
       ),
     );
   }

@@ -4,7 +4,6 @@ import 'package:crop_recommendation/dataprovider/mlprovider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:image_picker/image_picker.dart';
-
 import 'package:http/http.dart' as http;
 import 'package:go_router/go_router.dart';
 
@@ -14,6 +13,7 @@ class DamageDetection extends StatefulWidget {
 }
 
 class _DamageDetectionState extends State<DamageDetection> {
+  bool _isLoading = false;
   File? _image;
 
   Future<void> _getImage(ImageSource source) async {
@@ -26,6 +26,9 @@ class _DamageDetectionState extends State<DamageDetection> {
   }
 
   Future<void> _uploadImage() async {
+    setState(() {
+      _isLoading = true;
+    });
     if (_image == null) {
       return;
     }
@@ -58,6 +61,10 @@ class _DamageDetectionState extends State<DamageDetection> {
       );
     } catch (error) {
       print("Error sending data: $error");
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -65,7 +72,7 @@ class _DamageDetectionState extends State<DamageDetection> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Image Upload App"),
+        title: Text("Damage Detection"),
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
@@ -75,36 +82,44 @@ class _DamageDetectionState extends State<DamageDetection> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            _image == null
-                ? Text("No image selected")
-                : Image.file(
-                    _image!,
-                    height: 150,
-                  ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                  onPressed: () => _getImage(ImageSource.gallery),
-                  child: Text("Pick Image"),
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              if (_isLoading)
+                Center(child: CircularProgressIndicator())
+              else ...[
+                _image == null
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                            Text("No image selected"),
+                            Icon(Icons.photo_library)
+                          ])
+                    : Image.file(
+                        _image!,
+                        height: 150,
+                      ),
+                SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () => _getImage(ImageSource.gallery),
+                      child: Text("Pick Image"),
+                    ),
+                    SizedBox(width: 20),
+                    ElevatedButton(
+                      onPressed: () => _getImage(ImageSource.camera),
+                      child: Text("Take Picture"),
+                    ),
+                  ],
                 ),
-                SizedBox(width: 20),
+                SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () => _getImage(ImageSource.camera),
-                  child: Text("Take Picture"),
+                  onPressed: _uploadImage,
+                  child: Text("Submit"),
                 ),
               ],
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _uploadImage,
-              child: Text("Submit"),
-            ),
-          ],
-        ),
+            ]),
       ),
     );
   }
