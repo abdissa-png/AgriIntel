@@ -37,11 +37,11 @@ This repository contains the source code for AgriIntel, an AI-powered agricultur
    flutter pub get
    ```
 5. Set up the database and run the Django server:
-  ```bash
-  git checkout master
-  python manage.py migrate
-  python manage.py runserver 0.0.0.0:8000
-  ```
+   ```bash
+   git checkout master
+   python manage.py migrate
+   python manage.py runserver 0.0.0.0:8000
+   ```
 6. Change the backend address to your backend: go to dataprovider/provider.dart and change the baseUrl to the backend address
    ```bash
    baseUrl: "http://your-backend-address:8000"
